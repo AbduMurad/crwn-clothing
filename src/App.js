@@ -1,18 +1,15 @@
 import React from "react";
 import "./App.css";
 import Homepage from "./pages/homepage/homepage.component";
+import ShopPage from "./pages/shoppage/shoppage.component";
 import { Route, Switch } from "react-router-dom";
-
-const hats = () => {
-  return <h1>Hats page.</h1>;
-};
 
 function App() {
   return (
     <div>
       <Switch>
         <Route exact path="/" component={Homepage} />
-        <Route exact path="/hats" component={hats} />
+        <Route exact path="/shop" component={ShopPage} />
       </Switch>
     </div>
   );
