@@ -10,29 +10,23 @@ import {
   createUserProfileDocument,
 } from "../src/firebase/firebase.utils";
 import { onSnapshot } from "firebase/firestore";
+import { connect } from "react-redux";
+import { setCurrentUser } from "./redux/user/user.actions";
 
 class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      currentUser: null,
-    };
-  }
-
   unsbscribeFromAuth = null;
 
   componentDidMount() {
+    const { setCurrentUser } = this.props;
     this.unsbscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
 
         onSnapshot(userRef, (snapshot) =>
-          this.setState({
-            currentUser: { id: snapshot.id, ...snapshot.data() },
-          })
+          setCurrentUser({ id: snapshot.id, ...snapshot.data() })
         );
       } else {
-        this.setState({ currentUser: userAuth });
+        setCurrentUser(null);
       }
     });
   }
@@ -43,7 +37,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Header currentUser={this.state.currentUser} />
+        <Header />
         <Switch>
           <Route exact path="/" component={Homepage} />
           <Route exact path="/shop" component={ShopPage} />
@@ -54,4 +48,8 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(null, mapDispatchToProps)(App);
