@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { doc, getDoc, setDoc, getFirestore } from "firebase/firestore";
+// import { collection, writeBatch, getDocs, addDoc } from "firebase/firestore";
 
 const config = {
   apiKey: "AIzaSyBpfOUns2M260j-jrER9N8l-Daf0649lNY",
@@ -11,6 +12,8 @@ const config = {
   appId: "1:380624096565:web:7921f0b47bc219e714907c",
   measurementId: "G-TFTRJRK671",
 };
+initializeApp(config);
+export const db = getFirestore();
 
 export const createUserProfileDocument = async (
   userAuth,
@@ -18,7 +21,6 @@ export const createUserProfileDocument = async (
 ) => {
   if (!userAuth) return;
 
-  const db = getFirestore();
   const docRef = doc(db, `users/${userAuth.uid}}`);
   const docSnapshot = await getDoc(docRef);
   if (!docSnapshot.exists()) {
@@ -38,7 +40,42 @@ export const createUserProfileDocument = async (
   return docRef;
 };
 
-initializeApp(config);
+// Try to make firebase assign random IDs, Abdu
+//--------------------------------------------
+// export const addCollectionAndItsDocuments = async (
+//   collectionKey,
+//   objectsToAdd
+// ) => {
+//   const batch = writeBatch(db);
+//   objectsToAdd.forEach(async (element, index, objectsToAdd) => {
+//     const newDocRef = await addDoc(collection(db, collectionKey), element);
+//     batch.set(newDocRef, element);
+//     if (index === objectsToAdd.length - 1) {
+//       await batch.commit();
+//     }
+//   });
+
+// await batch.commit();
+// };
+//--------------------------------------------
+
+export const convertCollectionsSnapshotToMap = (collectionSnapshot) => {
+  const transformedCollection = collectionSnapshot.docs.map((collection) => {
+    const { title, items } = collection.data();
+    return {
+      title,
+      items,
+      routeName: encodeURI(`shop/${title.toLowerCase()}`),
+      id: collection.id,
+    };
+  });
+
+  return transformedCollection.reduce((accumulator, collection) => {
+    const title = collection.title.toLowerCase();
+    accumulator[title] = collection;
+    return accumulator;
+  }, {});
+};
 
 export const auth = getAuth();
 

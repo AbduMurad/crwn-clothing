@@ -1,12 +1,12 @@
 import React from "react";
 import DirectoryMenu from "../../components/directory-menu/directory-menu.component";
-import "./homepage.styles.scss";
+import { HomepageComponent } from "./homepage.styles";
 
 const Homepage = () => {
   return (
-    <div className="homepage">
+    <HomepageComponent>
       <DirectoryMenu />
-    </div>
+    </HomepageComponent>
   );
 };
 

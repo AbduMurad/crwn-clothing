@@ -9,18 +9,23 @@ import SigninAndSignupPage from "./pages/signin-and-signup-page/signin-and-signu
 import {
   auth,
   createUserProfileDocument,
+  // addCollectionAndItsDocuments,
 } from "../src/firebase/firebase.utils";
 import { onSnapshot } from "firebase/firestore";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { setCurrentUser } from "./redux/user/user.actions";
 import { selectCurrentUser } from "./redux/user/user.selectors";
+// import { selectCollectionsAsAnArray } from "./redux/shop/shop.selectors";
 
 class App extends React.Component {
   unsbscribeFromAuth = null;
 
   componentDidMount() {
     const { setCurrentUser } = this.props;
+    // const ModifiedCollectionsArray = collectionsArray.map(
+    //   ({ title, items }) => ({ title, items })
+    // );
     this.unsbscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
@@ -31,6 +36,7 @@ class App extends React.Component {
       } else {
         setCurrentUser(null);
       }
+      // addCollectionAndItsDocuments("collections", ModifiedCollectionsArray);
     });
   }
   componentWillUnmount() {
@@ -64,6 +70,7 @@ class App extends React.Component {
 
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser,
+  // collectionsArray: selectCollectionsAsAnArray,
 });
 
 const mapDispatchToProps = (dispatch) => ({
