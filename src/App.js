@@ -14,30 +14,32 @@ import {
 import { onSnapshot } from "firebase/firestore";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { setCurrentUser } from "./redux/user/user.actions";
 import { selectCurrentUser } from "./redux/user/user.selectors";
+import { checkUserSession } from "./redux/user/user.actions";
 // import { selectCollectionsAsAnArray } from "./redux/shop/shop.selectors";
 
 class App extends React.Component {
   unsbscribeFromAuth = null;
 
   componentDidMount() {
-    const { setCurrentUser } = this.props;
+    const { checkUserSession } = this.props;
+    checkUserSession();
     // const ModifiedCollectionsArray = collectionsArray.map(
     //   ({ title, items }) => ({ title, items })
     // );
-    this.unsbscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
-      if (userAuth) {
-        const userRef = await createUserProfileDocument(userAuth);
+    // #################### Depricated By using sagas #########################3
+    // this.unsbscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+    //   if (userAuth) {
+    //     const userRef = await createUserProfileDocument(userAuth);
 
-        onSnapshot(userRef, (snapshot) =>
-          setCurrentUser({ id: snapshot.id, ...snapshot.data() })
-        );
-      } else {
-        setCurrentUser(null);
-      }
-      // addCollectionAndItsDocuments("collections", ModifiedCollectionsArray);
-    });
+    //     onSnapshot(userRef, (snapshot) =>
+    //       setCurrentUser({ id: snapshot.id, ...snapshot.data() })
+    //     );
+    //   } else {
+    //     setCurrentUser(null);
+    //   }
+    //   // addCollectionAndItsDocuments("collections", ModifiedCollectionsArray);
+    // });
   }
   componentWillUnmount() {
     this.unsbscribeFromAuth();
@@ -74,7 +76,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+  checkUserSession: () => dispatch(checkUserSession()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

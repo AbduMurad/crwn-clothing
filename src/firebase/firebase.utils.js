@@ -40,7 +40,7 @@ export const createUserProfileDocument = async (
   return docRef;
 };
 
-// Try to make firebase assign random IDs, Abdu
+// Try to make firebase assign random IDs, Abdu ### Done
 //--------------------------------------------
 // export const addCollectionAndItsDocuments = async (
 //   collectionKey,
@@ -58,6 +58,15 @@ export const createUserProfileDocument = async (
 // await batch.commit();
 // };
 //--------------------------------------------
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
+};
 
 export const convertCollectionsSnapshotToMap = (collectionSnapshot) => {
   const transformedCollection = collectionSnapshot.docs.map((collection) => {
@@ -79,9 +88,9 @@ export const convertCollectionsSnapshotToMap = (collectionSnapshot) => {
 
 export const auth = getAuth();
 
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prombt: "select_account" });
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prombt: "select_account" });
 
 export const signInWithGoogle = () => {
-  return signInWithPopup(auth, provider);
+  return signInWithPopup(auth, googleProvider);
 };
